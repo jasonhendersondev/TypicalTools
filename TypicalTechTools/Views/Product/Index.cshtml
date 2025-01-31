@@ -1,0 +1,42 @@
+﻿@model IEnumerable<Product>
+@{
+    ViewData["Title"] = "Home Page";
+    
+
+    //Check the role of the current user
+    bool isRequiredRole = Context.User.IsInRole("ADMIN");
+}
+
+<div class="text-center">
+    <h1>Products</h1>
+</div>
+@if (isRequiredRole)
+{ 
+<div class="text-center">
+        <!--Only show the Add Product link if the user is logged in-->
+    <a asp-controller="Product" asp-action="Create" class="btn btn-primary">Add Product</a>
+</div>
+}
+
+<div class="card-container row">
+    @foreach (var product in Model)
+    {
+        <div class="single-card card shadow m-2 text-center product-card">
+            <h2>@product.Name</h2>
+            <h3>$@product.Price</h3>
+            <!--Only show the update price link if the user is logged in-->
+            @if (isRequiredRole)
+            {
+                <a asp-controller="Product" asp-route-id="@product.Id" asp-action="Edit">Update Price</a>
+            }
+            <small>Updated @product.UpdatedDate.ToString("dd MMMM yyyy hh:mm tt")</small><br>
+            <p class="product-description">@product.Description</p>
+            <small>Product Code: @product.Id</small>
+            <div>
+                @Html.ActionLink("Comments", "CommentList", "Comment", new {id = product.Id }, new {@class= "btn btn-primary m-2" })
+            </div>
+
+        </div>
+    }
+
+</div>
